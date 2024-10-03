@@ -1,0 +1,38 @@
+import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+
+# Generar 100 números aleatorios uniformemente distribuidos entre 0 y 1
+n = 100
+data = np.random.uniform(0, 1, n)
+
+# Realizar la prueba de Kolmogorov-Smirnov
+ks_statistic, p_value = stats.kstest(data, 'uniform')
+
+# Resultados
+print(f'Estadística KS: {ks_statistic}')
+print(f'Valor p: {p_value}')
+
+# Graficar el histograma de los datos
+plt.hist(data, bins=10, density=True, alpha=0.6, color='g')
+
+# Graficar la función de distribución acumulada teórica
+x = np.linspace(0, 1, 100)
+plt.plot(x, np.ones_like(x), color='blue', lw=2, label='CDF Teórica (Uniforme)')
+
+# Graficar la función de distribución acumulada empírica
+ecdf = np.searchsorted(np.sort(data), x, side='right') / n
+plt.step(np.sort(data), ecdf, where='post', color='red', label='CDF Empírica')
+
+plt.title('Histograma y CDF de la muestra')
+plt.xlabel('Valor')
+plt.ylabel('Densidad')
+plt.legend()
+plt.show()
+
+# Interpretación de resultados
+alpha = 0.05
+if p_value < alpha:
+    print("Se rechaza la hipótesis nula: los datos no son uniformes.")
+else:
+    print("No se puede rechazar la hipótesis nula: los datos son uniformes.")
